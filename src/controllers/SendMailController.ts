@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
 import { getCustomRepository } from 'typeorm';
 import { SurveysRepository } from '../repositories/SurveysRepository';
-import { SurveysUsersRepository } from '../repositories/SurveysUserRepository';
+import { SurveysUsersRepository } from '../repositories/SurveysUsersRepository';
 import { UsersRepository } from '../repositories/UsersRepository';
 
     class SendMailController {
@@ -14,7 +14,7 @@ import { UsersRepository } from '../repositories/UsersRepository';
 
             const surveysUsersRepository = getCustomRepository(SurveysUsersRepository);
 
-            const userAlreadyExists = await usersRepository.findOne(email);
+            const userAlreadyExists = await usersRepository.findOne({email});
 
             if (!userAlreadyExists){
                 return response.status(400).json({
@@ -22,7 +22,7 @@ import { UsersRepository } from '../repositories/UsersRepository';
                 });
             }
 
-            const surveyAlreadyExists = await surveysRepository.findOne({id: survey_id});
+            const surveyAlreadyExists = await surveysRepository.findOne({id: survey_id})
 
             if (!surveyAlreadyExists){
                 return response.status(400).json({
@@ -30,10 +30,16 @@ import { UsersRepository } from '../repositories/UsersRepository';
                 })
             }
 
-            //salvar na tabela surveys_users
+            const surveyUser = surveysUsersRepository.create({
+                user_id: userAlreadyExists.id,
+                survey_id,
+            });
+            await surveysUsersRepository.save(surveyUser);
+
+            return response.json(surveyUser);
 
             // enviar email para o user parei no 24:00
-        }
+        } 
     }
 
 export {SendMailController}

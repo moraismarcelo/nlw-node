@@ -6,7 +6,8 @@ export class CreateSurveysUsers1614643186404 implements MigrationInterface {
         await queryRunner.createTable(
             new Table({
                 name: "surveys_users",
-                columns: [{
+                columns: [
+                {
                     name: "id",
                     type: "uuid",
                     isPrimary: true
